@@ -17,7 +17,6 @@ limitations under the License.
 package scaffolds
 
 import (
-	"errors"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
@@ -69,11 +68,8 @@ func (s *apiScaffolder) Scaffold() error {
 	// Load the boilerplate
 	boilerplate, err := afero.ReadFile(s.fs.FS, hack.DefaultBoilerplatePath)
 	if err != nil {
-		if errors.Is(err, afero.ErrFileNotFound) {
-			boilerplate = []byte("")
-		} else {
-			return fmt.Errorf("error scaffolding API/controller: unable to load boilerplate: %w", err)
-		}
+		boilerplate = []byte("")
+		log.Warnf("unable to load boilerplate (%s): %s", hack.DefaultBoilerplatePath, err)
 	}
 
 	// Initialize the machinery.Scaffold that will write the files to disk
